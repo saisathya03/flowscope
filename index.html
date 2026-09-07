@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#020814">
+  <title>FlowScope AI — 3D Data Flow Command Center</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/styles.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./js/vendor/three.module.js"
+      }
+    }
+  </script>
+  <script src="./js/vendor/chart.umd.js"></script>
+</head>
+<body>
+  <div id="loading-screen" class="loading-screen" role="status" aria-live="polite">
+    <div class="loader-orbit"><span></span><span></span><span></span></div>
+    <strong>INITIALIZING FLOWSPACE</strong>
+    <small id="loading-label">Loading synthetic network telemetry…</small>
+  </div>
+
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 44 44" fill="none"><path d="M9 13.5 22 6l13 7.5v17L22 38 9 30.5v-17Z" stroke="currentColor"/><path d="m9 13.5 13 8 13-8M22 21.5V38" stroke="currentColor"/><circle cx="22" cy="21.5" r="3.5" fill="currentColor"/></svg>
+      </div>
+      <div>
+        <p>FLOWSCOPE <em>AI</em></p>
+        <span>3D DATA FLOW COMMAND CENTER</span>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <span class="live-dot"></span>
+      <span>SIMULATION LIVE</span>
+      <time id="sim-clock">2026-08-28 05:48:00 UTC</time>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-button" id="reset-camera" title="Reset camera" aria-label="Reset camera">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7v5h5M20 17v-5h-5M6.1 16.5A7 7 0 0 0 18.5 15M17.9 7.5A7 7 0 0 0 5.5 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+      <button class="icon-button" id="fullscreen-button" title="Fullscreen" aria-label="Toggle fullscreen">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+      <div class="operator"><span>S</span><div><b>DEMO OPERATOR</b><small>Administrator</small></div></div>
+    </div>
+  </header>
+
+  <section class="kpi-strip" aria-label="Network overview">
+    <article class="kpi-card accent-blue">
+      <span class="kpi-icon">◇</span><div><small>TOTAL TRAFFIC</small><strong id="metric-traffic">—</strong><em>MB observed</em></div>
+    </article>
+    <article class="kpi-card accent-cyan">
+      <span class="kpi-icon">◴</span><div><small>AVG LATENCY</small><strong id="metric-latency">—</strong><em id="latency-trend">calculating</em></div>
+    </article>
+    <article class="kpi-card accent-violet">
+      <span class="kpi-icon">≋</span><div><small>BANDWIDTH</small><strong id="metric-bandwidth">—</strong><em>average use</em></div>
+    </article>
+    <article class="kpi-card accent-green">
+      <span class="kpi-icon">⌁</span><div><small>NETWORK LOAD</small><strong id="metric-load">—</strong><em>system average</em></div>
+    </article>
+    <article class="kpi-card accent-blue">
+      <span class="kpi-icon">⎋</span><div><small>CONNECTIONS</small><strong id="metric-connections">—</strong><em>latest interval</em></div>
+    </article>
+    <article class="kpi-card accent-red">
+      <span class="kpi-icon">!</span><div><small>ANOMALIES</small><strong id="metric-anomalies">—</strong><em>labelled events</em></div>
+    </article>
+    <article class="kpi-card accent-yellow">
+      <span class="kpi-icon">△</span><div><small>CRITICAL ROUTES</small><strong id="metric-routes">—</strong><em>need attention</em></div>
+    </article>
+    <article class="kpi-card health-card accent-green">
+      <div class="health-ring"><span id="metric-health">—</span></div><div><small>SYSTEM HEALTH</small><strong id="health-label">CALCULATING</strong><em>composite score</em></div>
+    </article>
+  </section>
+
+  <div class="app-layout">
+    <aside class="left-rail panel-surface">
+      <div class="panel-heading"><span>CONTROL MATRIX</span><i>LIVE</i><button class="collapse-button" id="collapse-left" title="Collapse controls" aria-label="Collapse control matrix sidebar">‹</button></div>
+
+      <section class="control-section">
+        <label class="section-label">FLOW LAYERS</label>
+        <button class="layer-toggle active" data-layer="current">
+          <span class="layer-swatch solid-blue"></span><div><b>Current data flow</b><small>Solid animated particles</small></div><i class="toggle-indicator"></i>
+        </button>
+        <button class="layer-toggle active" data-layer="predicted">
+          <span class="layer-swatch ghost-purple"></span><div><b>Predicted data flow</b><small>AI projected routes</small></div><i class="toggle-indicator"></i>
+        </button>
+      </section>
+
+      <section class="control-section">
+        <label class="section-label">VIEW CONTROLS</label>
+        <div class="view-controls-grid" id="camera-presets" role="group" aria-label="Camera view presets">
+          <button data-preset="perspective" class="active" title="Perspective view (1)" aria-label="Perspective camera view">PERSPECTIVE</button>
+          <button data-preset="top" title="Top view (2)" aria-label="Top camera view">TOP</button>
+          <button data-preset="side" title="Side view (3)" aria-label="Side camera view">SIDE</button>
+          <button data-preset="front" title="Front view (4)" aria-label="Front camera view">FRONT</button>
+          <button id="camera-reset-preset" title="Reset camera (R)" aria-label="Reset camera view">RESET</button>
+          <button id="full-view-side" title="Full view (F)" aria-label="Expand visualization to full view">FULL VIEW</button>
+        </div>
+      </section>
+
+      <section class="control-section filter-stack">
+        <label class="section-label" for="department-filter">FILTER NETWORK</label>
+        <div class="select-wrap"><span>DEPT</span><select id="department-filter"><option value="All">All departments</option></select></div>
+        <div class="select-wrap"><span>TYPE</span><select id="type-filter"><option value="All">All data types</option><option>Server</option><option>Database</option><option>API</option><option>Cloud</option><option>AI</option><option>IoT</option><option>Department</option><option>Security</option></select></div>
+        <div class="segmented-control" id="anomaly-filter" aria-label="Traffic status filter">
+          <button class="active" data-value="All">ALL</button><button data-value="Normal">NORMAL</button><button data-value="Anomaly">ANOMALY</button>
+        </div>
+      </section>
+
+      <section class="control-section">
+        <div class="range-heading"><label for="speed-control">SIMULATION SPEED</label><output id="speed-output">1.0×</output></div>
+        <input id="speed-control" class="range-input" type="range" min="0.25" max="3" value="1" step="0.25">
+        <div class="range-scale"><span>0.25×</span><span>1×</span><span>3×</span></div>
+      </section>
+
+      <section class="control-section hologram-controls">
+        <div class="range-heading"><label for="bloom-control">HOLOGRAM INTENSITY</label><output id="bloom-output">0.8×</output></div>
+        <input id="bloom-control" class="range-input hologram-range" type="range" min="0.4" max="1.8" value="0.8" step="0.1">
+        <label class="section-label">RENDER QUALITY</label>
+        <div class="segmented-control quality-control" id="quality-control" aria-label="3D render quality">
+          <button data-value="performance">FAST</button><button class="active" data-value="balanced">HIGH</button><button data-value="cinematic">ULTRA</button>
+        </div>
+      </section>
+
+      <section class="control-section legend-section">
+        <label class="section-label">PARTICLE COLOR LOGIC</label>
+        <p class="legend-hint">What is happening to the data.</p>
+        <div class="color-key"><span class="dot blue"></span><b>Normal</b><small>Routine data</small></div>
+        <div class="color-key"><span class="dot cyan"></span><b>High-speed</b><small>Fast transfer</small></div>
+        <div class="color-key"><span class="dot purple"></span><b>AI / analytics</b><small>Model workloads</small></div>
+        <div class="color-key"><span class="dot yellow"></span><b>Priority</b><small>Critical delivery</small></div>
+        <div class="color-key"><span class="dot red"></span><b>Suspicious</b><small>Threat / anomaly</small></div>
+        <div class="color-key"><span class="dot green"></span><b>Processed</b><small>Successful result</small></div>
+      </section>
+
+      <section class="control-section legend-section dept-legend">
+        <label class="section-label">DEPARTMENT IDENTITY</label>
+        <p class="legend-hint">Who owns the building. Separate from the data colors above.</p>
+        <div class="color-key"><span class="dot" style="background:#b86b43"></span><b>Development</b><small>Copper</small></div>
+        <div class="color-key"><span class="dot" style="background:#c97a72"></span><b>QA</b><small>Soft coral</small></div>
+        <div class="color-key"><span class="dot" style="background:#b89b62"></span><b>Finance</b><small>Champagne gold</small></div>
+        <div class="color-key"><span class="dot" style="background:#c9ced6"></span><b>Management</b><small>Pearl silver</small></div>
+        <div class="color-key"><span class="dot" style="background:#b98291"></span><b>HR</b><small>Dusty rose</small></div>
+        <div class="color-key"><span class="dot" style="background:#8f7863"></span><b>Operations</b><small>Bronze taupe</small></div>
+        <div class="color-key"><span class="dot" style="background:#697681"></span><b>IT</b><small>Gunmetal silver</small></div>
+      </section>
+
+      <section class="control-section encoding-card">
+        <label class="section-label">HOW TO READ THE FLOW</label>
+        <p><span>Particle size</span><b>Data volume</b></p>
+        <p><span>Particle speed</span><b>Transfer speed</b></p>
+        <p><span>Line thickness</span><b>Bandwidth use</b></p>
+        <p><span>Glow intensity</span><b>Network load</b></p>
+        <p><span>Particle density</span><b>Traffic concentration</b></p>
+      </section>
+    </aside>
+
+    <main class="stage-panel panel-surface">
+      <div class="stage-toolbar">
+        <div>
+          <span class="eyebrow" id="stage-eyebrow">3D BLUE FLOW IN ACTION</span>
+          <h1 id="stage-title">Live Data River</h1>
+        </div>
+        <div class="stage-actions">
+          <div class="view-switch" id="view-switch" aria-label="Visualization mode">
+            <button class="active" data-view="river"><span>≋</span> FLOW RIVER</button>
+            <button data-view="city"><span>◇</span> NETWORK CITY</button>
+            <button data-view="splat"><span>✦</span> SPLAT MODE</button>
+          </div>
+          <div class="view-switch camera-mini" id="camera-mini" role="group" aria-label="Camera view presets">
+            <button data-preset="perspective" class="active" title="Perspective view (1)" aria-label="Perspective camera view">3D</button>
+            <button data-preset="top" title="Top view (2)" aria-label="Top camera view">TOP</button>
+            <button data-preset="side" title="Side view (3)" aria-label="Side camera view">SIDE</button>
+            <button data-preset="front" title="Front view (4)" aria-label="Front camera view">FRONT</button>
+          </div>
+          <button class="toolbar-button primary" id="pause-flow"><span id="pause-icon">Ⅱ</span><b id="pause-label">PAUSE FLOW</b></button>
+          <button class="toolbar-button story" id="start-story" title="Functional system flow: Development → API Gateway → Server → Database → Server → Cloud"><span>▶</span><b>STORY MODE</b></button>
+          <button class="toolbar-button" id="start-situation" title="Twelve-step live network situation (anomaly walkthrough)"><span>◈</span><b>SITUATION</b></button>
+          <button class="toolbar-button" id="cine-camera"><span>◉</span><b id="cine-label">CINE CAM</b></button>
+          <button class="toolbar-button" id="full-view-button" title="Full view (F)" aria-label="Toggle full visualization view"><span>⛶</span><b id="full-view-label">FULL VIEW</b></button>
+        </div>
+      </div>
+
+      <div id="scene-container" class="scene-container" tabindex="0" aria-label="Interactive 3D network. Drag to rotate, scroll to zoom, right-drag to pan.">
+        <div class="scene-badge current-badge"><span></span>CURRENT DATA FLOW</div>
+        <div class="scene-badge predicted-badge"><span></span>AI PREDICTED FLOW</div>
+        <div class="render-badge"><i></i><span id="render-mode-label">DENSE FIBER ENGINE</span><b>REAL-TIME</b></div>
+        <div class="holo-reticle" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="scene-hint"><span>DRAG</span> Rotate · <span>SCROLL</span> Zoom · <span>RIGHT-DRAG</span> Pan · <span>CLICK</span> Inspect</div>
+        <div id="scene-tooltip" class="scene-tooltip" hidden></div>
+
+        <div class="hud hud-chips" id="hud-chips" aria-label="Network status">
+          <div class="hud-chip chip-cyan"><span>TRAFFIC</span><b id="hud-traffic">—</b><canvas id="hud-spark-traffic" width="96" height="22" aria-hidden="true"></canvas></div>
+          <div class="hud-chip chip-blue"><span>LATENCY</span><b id="hud-latency">—</b><canvas id="hud-spark-latency" width="96" height="22" aria-hidden="true"></canvas></div>
+          <div class="hud-chip chip-yellow"><span>LOAD</span><b id="hud-load">—</b><canvas id="hud-spark-load" width="96" height="22" aria-hidden="true"></canvas></div>
+          <div class="hud-chip chip-green"><span>HEALTH</span><b id="hud-health">—</b><canvas id="hud-spark-health" width="96" height="22" aria-hidden="true"></canvas></div>
+        </div>
+        <button class="hud hud-square" id="hud-fullscreen" title="Fullscreen" aria-label="Toggle fullscreen">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <div class="hud hud-camera" id="hud-camera" role="group" aria-label="Camera views">
+          <button data-preset="perspective" class="active" title="Perspective view (1)" aria-label="Perspective camera view"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
+          <button data-preset="top" title="Top view (2)" aria-label="Top camera view"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m4 7.5 8 4.5 8-4.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 3v9" stroke="currentColor" stroke-width="1.5"/></svg></button>
+          <button data-preset="side" title="Side view (3)" aria-label="Side camera view"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 12v9M12 12 4 7.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
+          <button data-preset="front" title="Front view (4)" aria-label="Front camera view"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 12v9M12 12l8-4.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
+          <button id="hud-camera-reset" title="Reset camera (R)" aria-label="Reset camera view"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7v5h5M20 17v-5h-5M6.1 16.5A7 7 0 0 0 18.5 15M17.9 7.5A7 7 0 0 0 5.5 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+        </div>
+        <button class="hud hud-round hud-menu" id="hud-menu" title="Controls" aria-label="Open control menu">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <button class="hud hud-round hud-ai" id="hud-ai" title="AI intelligence" aria-label="Open AI intelligence panel">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9.5 4.5a3 3 0 0 0-3 3v.6A3.2 3.2 0 0 0 4 11.5a3.2 3.2 0 0 0 1.4 2.7A3 3 0 0 0 8 19.5h1.5V4.5Zm5 0a3 3 0 0 1 3 3v.6a3.2 3.2 0 0 1 2.5 3.4 3.2 3.2 0 0 1-1.4 2.7 3 3 0 0 1-2.6 5.3H14.5V4.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9.5 9h-2M9.5 14H7M14.5 9h2M14.5 14H17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </button>
+
+        <aside id="selection-panel" class="selection-panel" aria-live="polite">
+          <button id="close-selection" aria-label="Close details">×</button>
+          <span class="eyebrow" id="selection-kind">NODE INSPECTOR</span>
+          <h2 id="selection-title">Select a node</h2>
+          <div id="selection-status" class="status-pill healthy">HEALTHY</div>
+          <div id="selection-grid" class="selection-grid"></div>
+        </aside>
+
+        <aside id="alert-panel" class="alert-panel">
+          <div class="alert-icon">!</div>
+          <div><span>AI NETWORK ALERT</span><h3 id="alert-title">High Latency Detected</h3><p id="alert-route">Server-02 → Database-01</p></div>
+          <button id="open-alerts">VIEW</button>
+        </aside>
+
+        <section id="story-panel" class="story-panel" hidden>
+          <div class="story-topline"><span>GUIDED STORY</span><b id="story-counter">01 / 09</b></div>
+          <div class="story-progress"><i id="story-progress"></i></div>
+          <span class="eyebrow" id="story-step-label">STEP 1 — DATA GENERATED</span>
+          <h2 id="story-title">Development creates API traffic</h2>
+          <p id="story-copy">A new software release sends a wave of requests into the company network.</p>
+          <div class="story-controls"><button id="story-prev">←</button><button id="story-next">NEXT STEP →</button><button id="story-exit">EXIT</button></div>
+        </section>
+
+        <section id="situation-panel" class="situation-panel" hidden aria-live="polite">
+          <div class="situation-topline"><span>LIVE NETWORK SITUATION</span><i id="situation-kind">NETWORK SITUATION</i><em id="situation-state">LIVE</em><button id="situation-close" title="Close and explore the full network" aria-label="Close situation story">×</button></div>
+          <div class="situation-heading"><b id="situation-counter">STEP 01 / 12</b><h2 id="situation-title">Data generated</h2></div>
+          <div id="situation-lines" class="situation-lines"></div>
+          <div class="situation-progress"><i id="situation-progress"></i></div>
+          <div class="situation-controls">
+            <button id="situation-prev" title="Previous step">◀ PREV</button>
+            <button id="situation-pause" title="Pause or resume">PAUSE</button>
+            <button id="situation-next" title="Next step">NEXT ▶</button>
+            <button id="situation-skip" title="Skip to the result">SKIP ▶▶</button>
+          </div>
+          <div id="situation-result" class="situation-result" hidden>
+            <button id="situation-replay">REPLAY SITUATION</button>
+            <button id="situation-explore" class="primary">EXPLORE FULL NETWORK</button>
+          </div>
+        </section>
+
+        <section id="flow-panel" class="situation-panel flow-panel" hidden aria-live="polite">
+          <div class="situation-topline"><span>SYSTEM FLOW</span><i id="flow-kind">FUNCTIONAL STORY</i><em id="flow-state">LIVE</em><button id="flow-close" title="Close and explore the full network" aria-label="Close system flow">×</button></div>
+          <div class="situation-heading"><b id="flow-counter">PHASE 01 / 15</b><h2 id="flow-title">File created</h2></div>
+          <p id="flow-note" class="flow-note"></p>
+          <div id="flow-basis" class="flow-basis observed"></div>
+          <div class="situation-progress"><i id="flow-progress"></i></div>
+          <div class="situation-controls">
+            <button id="flow-prev" title="Previous phase">◀ PREV</button>
+            <button id="flow-pause" title="Pause or resume">PAUSE</button>
+            <button id="flow-next" title="Next phase">NEXT ▶</button>
+            <button id="flow-profile" title="Drive the flow with the latest dataset rows or the peak-load rows">ROWS: LATEST</button>
+          </div>
+          <div id="flow-result" class="situation-result" hidden>
+            <button id="flow-replay">REPLAY FLOW</button>
+            <button id="flow-explore" class="primary">EXPLORE FULL NETWORK</button>
+          </div>
+        </section>
+
+        <div id="route-focus" class="route-focus" hidden aria-live="polite">
+          <div class="rf-title" id="rf-title"><b>Route</b><span class="rf-status">NORMAL</span></div>
+          <div class="rf-endpoint rf-source" id="rf-source" hidden><small>◇ SOURCE</small><b></b><i class="rf-line"></i></div>
+          <div class="rf-endpoint rf-destination" id="rf-destination" hidden><small>◆ DESTINATION</small><b></b><i class="rf-line"></i></div>
+          <div class="rf-beacons" id="rf-beacons"></div>
+        </div>
+        <div id="route-ribbon" class="route-ribbon" hidden>
+          <div class="rf-ribbon-text" id="rf-ribbon-text"></div>
+          <button id="rf-pin" title="Pin and refocus the route">PIN</button>
+          <button id="rf-follow" title="Follow a particle along the route">FOLLOW PARTICLE</button>
+          <button id="rf-close" title="Exit route focus" aria-label="Exit route focus">×</button>
+        </div>
+
+        <div class="bottom-legend">
+          <div><i class="solid-line"></i><span><b>Current</b> observed routes</span></div>
+          <div><i class="dash-line"></i><span><b>Predicted</b> translucent projections</span></div>
+          <div class="legend-stat"><span>VISIBLE FLOWS</span><b id="visible-flows">—</b></div>
+          <div class="legend-stat"><span>PARTICLES</span><b id="particle-count">—</b></div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="right-rail panel-surface">
+      <div class="panel-heading"><span>AI INTELLIGENCE</span><i class="purple-label">FORECASTING</i><button class="collapse-button" id="collapse-right" title="Collapse AI panel" aria-label="Collapse AI intelligence sidebar">›</button></div>
+
+      <section class="insight-section forecast-card">
+        <div class="insight-heading"><div><span class="section-label">TRAFFIC FORECAST</span><h3>Next 12 hours</h3></div><span class="confidence"><b>87%</b> confidence</span></div>
+        <canvas id="forecast-chart" height="150" aria-label="Historical and predicted traffic chart"></canvas>
+        <div class="chart-key"><span><i class="history-key"></i>Historical</span><span><i class="prediction-key"></i>AI prediction</span></div>
+      </section>
+
+      <section class="insight-section prediction-card">
+        <div class="insight-heading"><div><span class="section-label">PREDICTED EVENTS</span><h3>What may happen next</h3></div><span class="ai-chip">AI</span></div>
+        <div id="prediction-list" class="prediction-list"></div>
+      </section>
+
+      <section class="insight-section recommendation-card">
+        <div class="insight-heading"><div><span class="section-label">RECOMMENDATION ENGINE</span><h3>Best next actions</h3></div><span class="recommend-count" id="recommend-count">0</span></div>
+        <div id="recommendation-list" class="recommendation-list"></div>
+      </section>
+
+      <section class="insight-section mini-metrics">
+        <div><span>API TRAFFIC</span><b id="api-traffic">—</b></div>
+        <div><span>DB QUERIES</span><b id="db-traffic">—</b></div>
+        <div><span>AI REQUESTS</span><b id="ai-traffic">—</b></div>
+        <div><span>PACKET LOSS</span><b id="packet-loss">—</b></div>
+      </section>
+    </aside>
+  </div>
+
+  <button id="reopen-left" class="edge-reopen edge-left" title="OPEN CONTROLS" aria-label="Open control matrix sidebar" hidden>›</button>
+  <button id="reopen-right" class="edge-reopen edge-right" title="OPEN AI PANEL" aria-label="Open AI intelligence sidebar" hidden>‹</button>
+
+  <footer class="statusbar">
+    <span><i class="status-ok"></i> DATASET <b id="record-count">—</b> RECORDS</span>
+    <span>MODEL <b>ISOLATION FOREST + RANDOM FOREST</b></span>
+    <span>LAST ANALYSIS <b id="analysis-time">—</b></span>
+    <span class="footer-tip">TIP: Select any building or glowing route to inspect its telemetry.</span>
+  </footer>
+
+  <dialog id="alerts-dialog" class="alerts-dialog">
+    <div class="dialog-heading"><div><span class="eyebrow">ANOMALY CENTER</span><h2>Active AI Alerts</h2></div><button id="close-alerts" aria-label="Close alerts">×</button></div>
+    <div id="alerts-list" class="alerts-list"></div>
+  </dialog>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

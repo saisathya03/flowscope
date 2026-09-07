@@ -1,0 +1,652 @@
+{
+  "generated_at": "2026-09-01T14:05:06.377203+00:00",
+  "records_analyzed": 360,
+  "algorithms": [
+    "Isolation Forest",
+    "Random Forest Regression"
+  ],
+  "forecast_method": "Random Forest next-interval baseline with conservative stress floors for nodes that contain known overload examples in the demonstration dataset.",
+  "metrics": {
+    "total_data_volume_mb": 68461.15,
+    "average_latency_ms": 43.36,
+    "average_transfer_speed_mbps": 370.05,
+    "average_bandwidth_usage_percent": 42.24,
+    "average_network_load_percent": 41.52,
+    "average_packet_loss_percent": 1.26,
+    "active_connections": 56,
+    "api_traffic": 94333,
+    "database_traffic": 61218,
+    "ai_traffic": 14267,
+    "anomalies": 28,
+    "model_anomalies": 29
+  },
+  "model_metrics": {
+    "data_volume_mb": {
+      "mae": 100.97,
+      "r2": 0.11
+    },
+    "network_load_percent": {
+      "mae": 17.18,
+      "r2": -0.01
+    },
+    "latency_ms": {
+      "mae": 23.5,
+      "r2": -0.06
+    },
+    "bandwidth_usage_percent": {
+      "mae": 14.09,
+      "r2": 0.19
+    }
+  },
+  "detections": {
+    "high_traffic_zones": [
+      {
+        "source": "Server-02",
+        "destination": "Database-02",
+        "data_volume_mb": 6696.27,
+        "latency_ms": 41.4,
+        "network_load_percent": 49.35,
+        "packet_loss_percent": 0.8
+      },
+      {
+        "source": "API-Gateway",
+        "destination": "Server-01",
+        "data_volume_mb": 6298.08,
+        "latency_ms": 43.57,
+        "network_load_percent": 53.38,
+        "packet_loss_percent": 4.66
+      },
+      {
+        "source": "Development",
+        "destination": "API-Gateway",
+        "data_volume_mb": 6073.92,
+        "latency_ms": 43.41,
+        "network_load_percent": 47.3,
+        "packet_loss_percent": 0.33
+      },
+      {
+        "source": "API-Gateway",
+        "destination": "Server-02",
+        "data_volume_mb": 5179.0,
+        "latency_ms": 49.55,
+        "network_load_percent": 43.57,
+        "packet_loss_percent": 4.17
+      },
+      {
+        "source": "Server-02",
+        "destination": "Database-01",
+        "data_volume_mb": 4929.21,
+        "latency_ms": 38.08,
+        "network_load_percent": 39.39,
+        "packet_loss_percent": 0.68
+      },
+      {
+        "source": "API-Gateway",
+        "destination": "Server-03",
+        "data_volume_mb": 4746.11,
+        "latency_ms": 40.02,
+        "network_load_percent": 53.18,
+        "packet_loss_percent": 1.37
+      }
+    ],
+    "bottlenecks": [
+      {
+        "source": "API-Gateway",
+        "destination": "Database-02",
+        "data_volume_mb": 100.45,
+        "latency_ms": 144.83,
+        "network_load_percent": 97.16,
+        "packet_loss_percent": 0.55
+      },
+      {
+        "source": "API-Gateway",
+        "destination": "Database-01",
+        "data_volume_mb": 259.62,
+        "latency_ms": 191.43,
+        "network_load_percent": 92.19,
+        "packet_loss_percent": 0.27
+      },
+      {
+        "source": "API-Gateway",
+        "destination": "Server-01",
+        "data_volume_mb": 6298.08,
+        "latency_ms": 43.57,
+        "network_load_percent": 53.38,
+        "packet_loss_percent": 4.66
+      },
+      {
+        "source": "API-Gateway",
+        "destination": "Server-03",
+        "data_volume_mb": 4746.11,
+        "latency_ms": 40.02,
+        "network_load_percent": 53.18,
+        "packet_loss_percent": 1.37
+      },
+      {
+        "source": "Server-02",
+        "destination": "Database-02",
+        "data_volume_mb": 6696.27,
+        "latency_ms": 41.4,
+        "network_load_percent": 49.35,
+        "packet_loss_percent": 0.8
+      },
+      {
+        "source": "IoT-Gateway",
+        "destination": "Server-02",
+        "data_volume_mb": 4720.61,
+        "latency_ms": 43.47,
+        "network_load_percent": 48.69,
+        "packet_loss_percent": 5.83
+      }
+    ],
+    "failed_connections": 3,
+    "suspicious_routes": 3,
+    "slow_routes": 9,
+    "overloaded_records": 19
+  },
+  "predictions": [
+    {
+      "node": "Server-02",
+      "current": {
+        "data_volume_mb": 89.31,
+        "network_load_percent": 28.12,
+        "latency_ms": 32.24,
+        "bandwidth_usage_percent": 29.26
+      },
+      "predicted": {
+        "data_volume_mb": 145.61,
+        "network_load_percent": 91.2,
+        "latency_ms": 184.0,
+        "bandwidth_usage_percent": 90.0
+      },
+      "traffic_change_percent": 63.0,
+      "risk": "Critical",
+      "forecast_basis": "Random Forest + overload stress scenario"
+    },
+    {
+      "node": "API-Gateway",
+      "current": {
+        "data_volume_mb": 83.26,
+        "network_load_percent": 28.33,
+        "latency_ms": 29.96,
+        "bandwidth_usage_percent": 30.33
+      },
+      "predicted": {
+        "data_volume_mb": 138.75,
+        "network_load_percent": 88.4,
+        "latency_ms": 118.0,
+        "bandwidth_usage_percent": 86.0
+      },
+      "traffic_change_percent": 66.6,
+      "risk": "Critical",
+      "forecast_basis": "Random Forest + overload stress scenario"
+    },
+    {
+      "node": "Database-01",
+      "current": {
+        "data_volume_mb": 298.79,
+        "network_load_percent": 49.68,
+        "latency_ms": 29.91,
+        "bandwidth_usage_percent": 53.08
+      },
+      "predicted": {
+        "data_volume_mb": 352.57,
+        "network_load_percent": 86.5,
+        "latency_ms": 162.0,
+        "bandwidth_usage_percent": 84.0
+      },
+      "traffic_change_percent": 18.0,
+      "risk": "Watch",
+      "forecast_basis": "Random Forest + overload stress scenario"
+    },
+    {
+      "node": "Cloud-01",
+      "current": {
+        "data_volume_mb": 39.19,
+        "network_load_percent": 22.82,
+        "latency_ms": 34.7,
+        "bandwidth_usage_percent": 24.14
+      },
+      "predicted": {
+        "data_volume_mb": 142.71,
+        "network_load_percent": 82.0,
+        "latency_ms": 105.0,
+        "bandwidth_usage_percent": 80.0
+      },
+      "traffic_change_percent": 264.1,
+      "risk": "Watch",
+      "forecast_basis": "Random Forest + overload stress scenario"
+    },
+    {
+      "node": "Security-Hub",
+      "current": {
+        "data_volume_mb": 76.42,
+        "network_load_percent": 25.03,
+        "latency_ms": 83.97,
+        "bandwidth_usage_percent": 25.96
+      },
+      "predicted": {
+        "data_volume_mb": 261.66,
+        "network_load_percent": 58.75,
+        "latency_ms": 35.7,
+        "bandwidth_usage_percent": 52.63
+      },
+      "traffic_change_percent": 242.4,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "Database-02",
+      "current": {
+        "data_volume_mb": 78.31,
+        "network_load_percent": 25.51,
+        "latency_ms": 36.51,
+        "bandwidth_usage_percent": 28.58
+      },
+      "predicted": {
+        "data_volume_mb": 259.5,
+        "network_load_percent": 58.71,
+        "latency_ms": 52.93,
+        "bandwidth_usage_percent": 47.56
+      },
+      "traffic_change_percent": 231.4,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "Server-04",
+      "current": {
+        "data_volume_mb": 159.77,
+        "network_load_percent": 34.7,
+        "latency_ms": 27.71,
+        "bandwidth_usage_percent": 39.1
+      },
+      "predicted": {
+        "data_volume_mb": 166.57,
+        "network_load_percent": 44.02,
+        "latency_ms": 42.73,
+        "bandwidth_usage_percent": 41.88
+      },
+      "traffic_change_percent": 4.3,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "Management",
+      "current": {
+        "data_volume_mb": 65.68,
+        "network_load_percent": 37.21,
+        "latency_ms": 38.24,
+        "bandwidth_usage_percent": 35.51
+      },
+      "predicted": {
+        "data_volume_mb": 103.74,
+        "network_load_percent": 39.08,
+        "latency_ms": 37.98,
+        "bandwidth_usage_percent": 39.74
+      },
+      "traffic_change_percent": 57.9,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "Server-03",
+      "current": {
+        "data_volume_mb": 118.23,
+        "network_load_percent": 32.21,
+        "latency_ms": 33.24,
+        "bandwidth_usage_percent": 34.03
+      },
+      "predicted": {
+        "data_volume_mb": 165.0,
+        "network_load_percent": 37.76,
+        "latency_ms": 40.25,
+        "bandwidth_usage_percent": 38.64
+      },
+      "traffic_change_percent": 39.6,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "Server-01",
+      "current": {
+        "data_volume_mb": 118.21,
+        "network_load_percent": 34.29,
+        "latency_ms": 34.98,
+        "bandwidth_usage_percent": 33.83
+      },
+      "predicted": {
+        "data_volume_mb": 140.5,
+        "network_load_percent": 36.57,
+        "latency_ms": 44.59,
+        "bandwidth_usage_percent": 36.82
+      },
+      "traffic_change_percent": 18.9,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "AI-Engine",
+      "current": {
+        "data_volume_mb": 170.35,
+        "network_load_percent": 36.22,
+        "latency_ms": 35.65,
+        "bandwidth_usage_percent": 39.72
+      },
+      "predicted": {
+        "data_volume_mb": 167.68,
+        "network_load_percent": 36.4,
+        "latency_ms": 38.05,
+        "bandwidth_usage_percent": 38.11
+      },
+      "traffic_change_percent": -1.6,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "QA",
+      "current": {
+        "data_volume_mb": 110.36,
+        "network_load_percent": 28.27,
+        "latency_ms": 76.31,
+        "bandwidth_usage_percent": 29.33
+      },
+      "predicted": {
+        "data_volume_mb": 128.3,
+        "network_load_percent": 35.37,
+        "latency_ms": 51.23,
+        "bandwidth_usage_percent": 34.54
+      },
+      "traffic_change_percent": 16.3,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "IoT-Gateway",
+      "current": {
+        "data_volume_mb": 91.49,
+        "network_load_percent": 41.11,
+        "latency_ms": 60.25,
+        "bandwidth_usage_percent": 41.68
+      },
+      "predicted": {
+        "data_volume_mb": 110.04,
+        "network_load_percent": 32.74,
+        "latency_ms": 40.25,
+        "bandwidth_usage_percent": 32.95
+      },
+      "traffic_change_percent": 20.3,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "Development",
+      "current": {
+        "data_volume_mb": 217.64,
+        "network_load_percent": 45.3,
+        "latency_ms": 48.85,
+        "bandwidth_usage_percent": 45.59
+      },
+      "predicted": {
+        "data_volume_mb": 143.42,
+        "network_load_percent": 32.07,
+        "latency_ms": 44.44,
+        "bandwidth_usage_percent": 32.66
+      },
+      "traffic_change_percent": -34.1,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "HR",
+      "current": {
+        "data_volume_mb": 48.61,
+        "network_load_percent": 26.7,
+        "latency_ms": 27.06,
+        "bandwidth_usage_percent": 26.76
+      },
+      "predicted": {
+        "data_volume_mb": 106.74,
+        "network_load_percent": 30.46,
+        "latency_ms": 39.87,
+        "bandwidth_usage_percent": 29.08
+      },
+      "traffic_change_percent": 119.6,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    },
+    {
+      "node": "Finance",
+      "current": {
+        "data_volume_mb": 75.01,
+        "network_load_percent": 30.94,
+        "latency_ms": 34.82,
+        "bandwidth_usage_percent": 31.18
+      },
+      "predicted": {
+        "data_volume_mb": 110.48,
+        "network_load_percent": 29.36,
+        "latency_ms": 38.72,
+        "bandwidth_usage_percent": 29.26
+      },
+      "traffic_change_percent": 47.3,
+      "risk": "Stable",
+      "forecast_basis": "Random Forest baseline"
+    }
+  ],
+  "recommendations": [
+    {
+      "severity": "Critical",
+      "action": "Increase API Gateway capacity and enable rate-based autoscaling.",
+      "reason": "Observed or predicted API load exceeds the safe operating range."
+    },
+    {
+      "severity": "High",
+      "action": "Optimize Database-01 queries and shift read traffic to Database-02.",
+      "reason": "Database response time and queue depth indicate a developing bottleneck."
+    },
+    {
+      "severity": "Critical",
+      "action": "Investigate and isolate traffic from Server-01 to Database-02.",
+      "reason": "Restricted traffic was denied and classified as a critical threat."
+    },
+    {
+      "severity": "High",
+      "action": "Reroute Server-02 traffic through Server-04 to Database-02.",
+      "reason": "The primary path has sustained high latency and bandwidth pressure."
+    },
+    {
+      "severity": "Medium",
+      "action": "Scale Cloud-01 resources before the next forecast interval.",
+      "reason": "Predicted cloud load is approaching the capacity threshold."
+    },
+    {
+      "severity": "Optimization",
+      "action": "Move low-priority internal traffic to lower-load routes during peak periods.",
+      "reason": "This preserves capacity for critical and AI workloads."
+    }
+  ],
+  "alerts": [
+    {
+      "timestamp": "2026-08-25T16:24:00+00:00",
+      "source": "API-Gateway",
+      "destination": "Server-01",
+      "type": "Failed Connection",
+      "latency_ms": 42.12,
+      "network_load_percent": 77.11,
+      "packet_loss_percent": 100.0,
+      "recommendation": "Block the route and begin incident investigation."
+    },
+    {
+      "timestamp": "2026-08-27T15:12:00+00:00",
+      "source": "IoT-Gateway",
+      "destination": "Server-02",
+      "type": "Failed Connection",
+      "latency_ms": 33.64,
+      "network_load_percent": 69.33,
+      "packet_loss_percent": 100.0,
+      "recommendation": "Block the route and begin incident investigation."
+    },
+    {
+      "timestamp": "2026-08-26T15:48:00+00:00",
+      "source": "API-Gateway",
+      "destination": "Server-02",
+      "type": "Failed Connection",
+      "latency_ms": 25.19,
+      "network_load_percent": 46.05,
+      "packet_loss_percent": 100.0,
+      "recommendation": "Block the route and begin incident investigation."
+    },
+    {
+      "timestamp": "2026-08-26T02:48:00+00:00",
+      "source": "API-Gateway",
+      "destination": "Database-01",
+      "type": "Database Overload",
+      "latency_ms": 227.79,
+      "network_load_percent": 91.04,
+      "packet_loss_percent": 0.16,
+      "recommendation": "Reroute through Server-04 and inspect the affected node."
+    },
+    {
+      "timestamp": "2026-08-26T05:24:00+00:00",
+      "source": "API-Gateway",
+      "destination": "Server-02",
+      "type": "High Latency",
+      "latency_ms": 300.67,
+      "network_load_percent": 42.15,
+      "packet_loss_percent": 0.63,
+      "recommendation": "Reroute through Server-04 and inspect the affected node."
+    },
+    {
+      "timestamp": "2026-08-28T01:36:00+00:00",
+      "source": "API-Gateway",
+      "destination": "Database-02",
+      "type": "Database Overload",
+      "latency_ms": 144.83,
+      "network_load_percent": 97.16,
+      "packet_loss_percent": 0.55,
+      "recommendation": "Reroute through Server-04 and inspect the affected node."
+    },
+    {
+      "timestamp": "2026-08-27T02:12:00+00:00",
+      "source": "API-Gateway",
+      "destination": "Database-01",
+      "type": "Database Overload",
+      "latency_ms": 155.07,
+      "network_load_percent": 93.33,
+      "packet_loss_percent": 0.37,
+      "recommendation": "Reroute through Server-04 and inspect the affected node."
+    },
+    {
+      "timestamp": "2026-08-26T18:24:00+00:00",
+      "source": "API-Gateway",
+      "destination": "Security-Hub",
+      "type": "Network Congestion",
+      "latency_ms": 220.17,
+      "network_load_percent": 90.8,
+      "packet_loss_percent": 0.56,
+      "recommendation": "Reroute through Server-04 and inspect the affected node."
+    }
+  ],
+  "forecast": [
+    {
+      "timestamp": "2026-08-26T20:00:00+00:00",
+      "traffic": 2777.03,
+      "load": 37.14,
+      "latency": 40.85,
+      "kind": "historical"
+    },
+    {
+      "timestamp": "2026-08-27T00:00:00+00:00",
+      "traffic": 1854.86,
+      "load": 30.92,
+      "latency": 45.6,
+      "kind": "historical"
+    },
+    {
+      "timestamp": "2026-08-27T04:00:00+00:00",
+      "traffic": 1914.37,
+      "load": 31.8,
+      "latency": 47.08,
+      "kind": "historical"
+    },
+    {
+      "timestamp": "2026-08-27T08:00:00+00:00",
+      "traffic": 5504.36,
+      "load": 50.38,
+      "latency": 41.64,
+      "kind": "historical"
+    },
+    {
+      "timestamp": "2026-08-27T12:00:00+00:00",
+      "traffic": 7220.31,
+      "load": 53.41,
+      "latency": 41.92,
+      "kind": "historical"
+    },
+    {
+      "timestamp": "2026-08-27T16:00:00+00:00",
+      "traffic": 4166.04,
+      "load": 47.1,
+      "latency": 43.31,
+      "kind": "historical"
+    },
+    {
+      "timestamp": "2026-08-27T20:00:00+00:00",
+      "traffic": 1750.28,
+      "load": 30.57,
+      "latency": 32.04,
+      "kind": "historical"
+    },
+    {
+      "timestamp": "2026-08-28T00:00:00+00:00",
+      "traffic": 1674.54,
+      "load": 29.89,
+      "latency": 39.83,
+      "kind": "historical"
+    },
+    {
+      "timestamp": "2026-08-28T04:00:00+00:00",
+      "traffic": 771.31,
+      "load": 28.68,
+      "latency": 52.95,
+      "kind": "historical"
+    },
+    {
+      "timestamp": "2026-08-28T08:00:00+00:00",
+      "traffic": 1482.63,
+      "load": 31.79,
+      "latency": 45.35,
+      "kind": "predicted"
+    },
+    {
+      "timestamp": "2026-08-28T12:00:00+00:00",
+      "traffic": 1580.54,
+      "load": 33.87,
+      "latency": 49.1,
+      "kind": "predicted"
+    },
+    {
+      "timestamp": "2026-08-28T16:00:00+00:00",
+      "traffic": 1692.44,
+      "load": 35.95,
+      "latency": 52.84,
+      "kind": "predicted"
+    }
+  ],
+  "predictive_flow": {
+    "current": [
+      "Server-01",
+      "API-Gateway",
+      "Server-02",
+      "Database-01"
+    ],
+    "predicted": [
+      "Server-01",
+      "API-Gateway",
+      "Server-04",
+      "Database-02"
+    ],
+    "reason": "AI projects a lower-load path that avoids the Server-02 to Database-01 bottleneck."
+  }
+}

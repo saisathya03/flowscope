@@ -1,0 +1,21 @@
+CINEMATIC V3 — SAME FOLDER UPDATE
+=================================
+
+1. Open your existing ai-3d-data-flow folder.
+2. Extract the update ZIP directly into that folder.
+3. Choose "Replace the files in the destination" when Windows asks.
+4. Keep this Command Prompt server running:
+
+   python -m http.server 8000
+
+5. Open http://localhost:8000
+6. Press Ctrl+F5 once.
+7. Select NETWORK CITY for the realistic physical-twin view.
+
+Recommended settings:
+- Render quality: HIGH
+- Hologram intensity: 0.8x
+- Use ULTRA only when animation remains smooth.
+
+No executable is required. If Windows warns about run_windows.bat, do not open it;
+use the Python command above instead.
