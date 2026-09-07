@@ -1,4 +1,4 @@
-# FlowScope AI — AI-Powered 3D Data Flow Visualization
+# FlowScope  — 3D Data Flow Visualization
 
 FlowScope AI is a local, interactive prototype that turns 360 realistic synthetic network-flow records into a futuristic 3D digital office/network. The animated city is the primary view; compact metrics, ML predictions, anomalies, and recommendations support it.
 
